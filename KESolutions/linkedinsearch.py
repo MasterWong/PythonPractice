@@ -28,17 +28,18 @@ def find_contact(fname, sname, company, sleepTime, browser):
     file.close()
 
     try:
-        chunks = source.split('<ul class="results-list">')[1].split('</ul>')[0]
+        chunks = source.split('<ul class="search-results__list list-style-none mt2">')[1].split('</ul>')[0]
         urls = []
-        for i in chunks.split('href="/in/')[1:]:
-            urlChunk = i.split('/"')[0]
+        for j in chunks.split('href="/in/')[1:]:
+            urlChunk = j.split('/"')[0]
             url = 'https://www.linkedin.com/in/' + urlChunk + '/'
             urls.append(url)
 
-        download_page(urls[0],fname+'.'+sname,sleepTime,browser)
+        download_page(urls[0], fname+'.'+sname, sleepTime, browser)
+        print('This place is executed')
     except:
         print('No profile found')
-        time.sleep(60)
+        time.sleep(20)
         file = open('newFailedScrapes.csv', 'a')
         file.write(fname + ',' + sname + ',' + company + '\n')
         file.close()
@@ -49,6 +50,7 @@ def download_page(link, sname, sleepTime, browser):
     browser.get(link)
     browser.maximize_window()
     browser.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+    print('scrolled')
     browser.find_element_by_class_name('pv-skills-section__chevron-icon').click()
     browser.find_element_by_class_name('pv-profile-section__toggle-detail-icon').click()# all the stuff that user liked and shared
     browser.find_elements_by_class_name('pv-profile-section__toggle-detail-icon')[4].click() # languages
@@ -60,10 +62,6 @@ def download_page(link, sname, sleepTime, browser):
     html_file = open("newProfiles/"+str(sname)+'.html', "w")
     html_file.write(temp.encode('utf-8').strip())
     html_file.close()
-
-
-# link = 'https://www.linkedin.com/in/cmagsisi/'
-# download_page(link, 'perhar', 5, browser)
 
 
 if __name__ == "__main__":
