@@ -1,6 +1,5 @@
 import numpy as np
 import pandas as pd
-import spacy
 import nltk
 import dialogflow
 
@@ -8,8 +7,6 @@ from nltk.corpus import stopwords
 from nltk.stem import SnowballStemmer
 
 snowball_stemmer = SnowballStemmer('english')
-
-nlp = spacy.load('en_core_web_sm')
 
 
 def remove_stopwords(text):
