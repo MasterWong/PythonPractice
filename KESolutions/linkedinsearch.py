@@ -19,12 +19,12 @@ def find_contact(fname, sname, company, sleepTime, browser):
     query = "https://www.linkedin.com/search/results/index/?keywords="+"TEMPFIRSTNAME"+"%20"+"TEMPLASTNAME"+"%20"+"TEMPCOMPANY"+"&origin=GLOBAL_SEARCH_HEADER"
     query = query.replace('TEMPFIRSTNAME', fname).replace('TEMPLASTNAME', sname).replace('TEMPCOMPANY', company)
     browser.get(query)
-    time.sleep(5)
+    time.sleep(10)
     source = browser.page_source
     # print(str(source))
     # Write file
-    file = open("newQueries/"+fname+'.'+sname+'.html', "w+")
-    file.write(str(source.encode('utf-8').strip()))
+    file = open("newQueries/"+fname+'.'+sname+'.html', "w+", encoding='utf-8')
+    file.write(source.strip())
     file.close()
 
     try:
@@ -35,8 +35,8 @@ def find_contact(fname, sname, company, sleepTime, browser):
             url = 'https://www.linkedin.com/in/' + urlChunk + '/'
             urls.append(url)
 
+        print(url)
         download_page(urls[0], fname+'.'+sname, sleepTime, browser)
-        print('This place is executed')
     except:
         print('No profile found')
         time.sleep(20)
@@ -50,23 +50,27 @@ def download_page(link, sname, sleepTime, browser):
     browser.get(link)
     browser.maximize_window()
     browser.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-    print('scrolled')
-    browser.find_element_by_class_name('pv-skills-section__chevron-icon').click()
+    time.sleep(10)
+
+    # This section does not work
+    browser.find_element_by_xpath("//*[@class='pv-profile-section__card-action-bar pv-skills-section__additional-skills artdeco-container-card-action-bar']").click()
     browser.find_element_by_class_name('pv-profile-section__toggle-detail-icon').click()# all the stuff that user liked and shared
-    browser.find_elements_by_class_name('pv-profile-section__toggle-detail-icon')[4].click() # languages
+    browser.find_elements_by_class_name('pv-accomplishments-block__expand artdeco-button artdeco-button--circle artdeco-button--1 artdeco-button--tertiary ember-view').click()
     browser.find_element_by_class_name('pv-accomplishment-entity__title').click()
+    # above does not work
 
     print('Pausing for ' + str(sleepTime) + ' seconds.')
     time.sleep(sleepTime)
     temp = browser.page_source
-    html_file = open("newProfiles/"+str(sname)+'.html', "w")
-    html_file.write(temp.encode('utf-8').strip())
+    html_file = open("newProfiles/"+sname+'.html', "w+", encoding='utf-8')
+    html_file.write(temp.strip())
     html_file.close()
 
 
 if __name__ == "__main__":
     browser.get('http://www.linkedin.com')
-    time.sleep(60)
+    # one minute to login
+    time.sleep(30)
 
     print('browser opeded')
 
@@ -83,7 +87,7 @@ if __name__ == "__main__":
             fname = i.split(',')[0]
             sname = i.split(',')[1]
             company = i.split(',')[2]
-            delaytime = 30+randint(0,30)
+            delaytime = 60+randint(0,30)
             print("Looking for: " + fname + ' ' + sname)
             try:
                 find_contact(fname, sname, company, delaytime, browser)
